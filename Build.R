@@ -1,9 +1,9 @@
-source('C:/Users/zakaria/Desktop/Intership/Program/DBControl/LoadPackage.R', echo=TRUE)
-source('C:/Users/zakaria/Desktop/Intership/Program/DBControl/Signal.R', echo=TRUE)
-source('C:/Users/zakaria/Desktop/Intership/Program/DBControl/DataClass.R', echo=TRUE)
-source('C:/Users/zakaria/Desktop/Intership/Program/DBControl/RRClass.R', echo=TRUE)
-source('C:/Users/zakaria/Desktop/Intership/Program/DBControl/AutClass.R', echo=TRUE)
-source('C:/Users/zakaria/Desktop/Intership/Program/DBControl/Utils.R', echo=TRUE)
+source('C:/Users/zakaria/Desktop/Intership/Program/Program/LoadPackage.R', echo=TRUE)
+source('C:/Users/zakaria/Desktop/Intership/Program/Program/Signal.R', echo=TRUE)
+source('C:/Users/zakaria/Desktop/Intership/Program/Program/DataClass.R', echo=TRUE)
+source('C:/Users/zakaria/Desktop/Intership/Program/Program/RRClass.R', echo=TRUE)
+source('C:/Users/zakaria/Desktop/Intership/Program/Program/AutClass.R', echo=TRUE)
+source('C:/Users/zakaria/Desktop/Intership/Program/Program/Utils.R', echo=TRUE)
 
 
 
@@ -16,17 +16,17 @@ data_file<-LoadData("C:\\Data\\zaka_data.csv",NumExp=3,sujet=1)
 
 
 
-
-
-paraSympMean<-autMean(aut_file@ParaSymp@val)
-sympMean<-autMean(aut_file@Symp@val)
+# z<-activityMean(data_file)
 ActivityFinal<-LabelActivity(activityMean(data_file))
 tempMean<-TemperatureMean(data_file@Temp@val)
+paraSympMean<-autMean(aut_file@ParaSymp@val)
+sympMean<-autMean(aut_file@Symp@val)
 
 
+plot()
 
 
-for (i in 1:length(data)) {
+for (i in 1:length(ActivityFinal)) {
   addExperimentation(1,3,ActivityFinal[i,],tempMean[i,],paraSympMean[i,],sympMean[i,])
 }
 

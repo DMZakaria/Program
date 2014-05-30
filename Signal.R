@@ -1,9 +1,8 @@
 ################################################################################################# 
-# Name of file           RRClass.R                                                              #
+# Name of file           Signal.R                                                               #
 # Creation Date          05/05/2014                                                             #
 # last modification      29/05/2014                                                             #
 # Version                2.0                                                                    # 
-# @Description           RR calss contains two signals (RR,HR)                                  #
 # @author                Djedou Zakaria                                                         #
 #################################################################################################
 

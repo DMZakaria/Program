@@ -52,9 +52,9 @@ activityMean <- function(x)
   x.x <- decouper(x["X"]["val"])
   x.y <- decouper(x["Y"]["val"])
   x.z <- decouper(x["Z"]["val"])
-  x.xx <- spliter(x.x,10)
-  x.yy <- spliter(x.y,10)
-  x.zz <- spliter(x.z,10)
+  x.xx <- spliter(x.x,100)
+  x.yy <- spliter(x.y,100)
+  x.zz <- spliter(x.z,100)
   Activity_Label <- unlist(lapply(x.xx,activite1))
   x.ay <- unlist(lapply(x.yy,activite1))
   x.az <- unlist(lapply(x.zz,activite1))
@@ -77,8 +77,8 @@ autMean<- function(aut)
 {
   e<-data.frame(aut)
   
-  #grouping variable for every 100 lines                             
-  grp<-(seq.int(nrow(e))-1) %/% 100 + 1
+  #grouping variable for every 10 lines                             
+  grp<-(seq.int(nrow(e))-1) %/% 10 + 1
   
   #use aggregate to calculate mean for groups
   aut2<-aggregate(.~grp,e, mean)
@@ -113,7 +113,7 @@ TemperatureMean <- function (temp)
   e<-data.frame(temp)
   
   #grouping variable for every 100 lines                             
-  grp<-(seq.int(nrow(e))-1) %/% 100 + 1
+  grp<-(seq.int(nrow(e))-1) %/% 1000 + 1
   
   #use aggregate to calculate mean for groups
   temperature<-aggregate(.~grp,e, mean)
@@ -126,7 +126,7 @@ decouper <- function(x)
   l <- list()
   i <- 1
   taille <- length(x)
-  delta <- 10 # (changer) 1 bloc pour 0.5 secondes
+  delta <- 100 # (changer) 1 bloc pour 0.5 secondes
   j <- i + delta
   z <- 1:(delta + 1)
   indice <- 1
