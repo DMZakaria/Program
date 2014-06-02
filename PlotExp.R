@@ -4,8 +4,8 @@ setGeneric( name ="plotAll",
 
 
 # method
-#imprime toutes les valeurs d'une experimentation
-setMethod( f ="plotAll",signature ="Experimentation",
+#imprime toutes les valeurs d'une data
+setMethod( f ="plotAll",signature ="data",
            def = function(x)
            {
              par(mfrow=c(3,2))
@@ -17,7 +17,7 @@ setMethod( f ="plotAll",signature ="Experimentation",
 )
 
 # imprime X, Y et Z
-setMethod( f ="plot",signature =c(x="Experimentation",y="ANY"),
+setMethod( f ="plot",signature =c(x="data",y="ANY"),
            def = function(x,y)
            {
              par(mfrow=c(2,2))
