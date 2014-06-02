@@ -29,7 +29,7 @@ addExperimentation<- function (sujet,expNum,activity,temperature,parasymp,symp)
   temp<-temperature
   para<-parasymp
   sympa<-symp
-  requetesql <- paste("INSERT INTO `record_data`  (`Sujet`,`Nume_Exp`, `activity_label`,`Temperature`,`ParaSymp`,`Symp`) VALUES ('",s,"', '",numExp,"', '",label,"','",temp,"','",para,"','",sympa,"');")
+  requetesql <- paste("INSERT INTO `record_data`  (`Sujet`,`Num_Night`, `Body_activity`,`Temperature`,`ParaSymp`,`Symp`) VALUES ('",s,"', '",numExp,"', '",label,"','",temp,"','",para,"','",sympa,"');")
   
   #send the query
   sqlQuery(channel,requetesql)
@@ -96,7 +96,7 @@ autMean<- function(aut)
 LabelActivity <- function(x)
 {
   
-  ifelse(x<5,'null',ifelse(x>=5 & x<10,'faible',ifelse(x>=10 & x<30,'moyenne','importante')))
+  ifelse(x<5,'null',ifelse(x>=5 & x<10,'weak',ifelse(x>=10 & x<30,'medium','high')))
   
 }
 
@@ -126,7 +126,7 @@ decouper <- function(x)
   l <- list()
   i <- 1
   taille <- length(x)
-  delta <- 100 # (changer) 1 bloc pour 0.5 secondes
+  delta <- 10
   j <- i + delta
   z <- 1:(delta + 1)
   indice <- 1

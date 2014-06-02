@@ -17,17 +17,18 @@ data_file<-LoadData("C:\\Data\\zaka_data.csv",NumExp=3,sujet=1)
 
 
 # z<-activityMean(data_file)
-ActivityFinal<-LabelActivity(activityMean(data_file))
+Activity<-LabelActivity(activityMean(data_file))
 tempMean<-TemperatureMean(data_file@Temp@val)
 paraSympMean<-autMean(aut_file@ParaSymp@val)
 sympMean<-autMean(aut_file@Symp@val)
 
 
-plot()
+#plot()
+length(Activity)
+nrow(tempMean)
 
-
-for (i in 1:length(ActivityFinal)) {
-  addExperimentation(1,3,ActivityFinal[i,],tempMean[i,],paraSympMean[i,],sympMean[i,])
+for (i in 1:length(Activity)) {
+  addExperimentation(1,3,Activity[i,],tempMean[i,],paraSympMean[i,],sympMean[i,])
 }
 
 
