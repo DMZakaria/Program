@@ -18,18 +18,19 @@
 # @param         sympa                                         #
 ################################################################
 
-addExperimentation<- function (sujet,expNum,activity,temperature,parasymp,symp)
+addExperimentation<- function (sujet,expNum,time,activity,temperature,parasymp,symp)
 {
   
   #open a connexion
   channel <- odbcConnect(dsn="RSQL",uid="root",pwd="toor")
   s <- sujet
   numExp <- expNum
+  t<-time
   label<-activity
   temp<-temperature
   para<-parasymp
   sympa<-symp
-  requetesql <- paste("INSERT INTO `record_data`  (`Sujet`,`Num_Night`, `Body_activity`,`Temperature`,`ParaSymp`,`Symp`) VALUES ('",s,"', '",numExp,"', '",label,"','",temp,"','",para,"','",sympa,"');")
+  requetesql <- paste("INSERT INTO `record_data`  (`Sujet`,`Num_Night`, `Time`,`Body_activity`,`Temperature`,`ParaSymp`,`Symp`) VALUES ('",s,"', '",numExp,"','",t,"', '",label,"','",temp,"','",para,"','",sympa,"');")
   
   #send the query
   sqlQuery(channel,requetesql)
@@ -47,24 +48,25 @@ addExperimentation<- function (sujet,expNum,activity,temperature,parasymp,symp)
 # @return        data frame                                  # 
 ##############################################################
 
-activityMean <- function(x)
+activityMean <- function(x,synchroVar)
 {
   x.x <- decouper(x["X"]["val"])
   x.y <- decouper(x["Y"]["val"])
   x.z <- decouper(x["Z"]["val"])
-  x.xx <- spliter(x.x,100)
-  x.yy <- spliter(x.y,100)
-  x.zz <- spliter(x.z,100)
-  Activity_Label <- unlist(lapply(x.xx,activite1))
+  x.xx <- spliter(x.x,synchroVar/10)
+  x.yy <- spliter(x.y,synchroVar/10)
+  x.zz <- spliter(x.z,synchroVar/10)
+  x.ax <- unlist(lapply(x.xx,activite1))
   x.ay <- unlist(lapply(x.yy,activite1))
   x.az <- unlist(lapply(x.zz,activite1))
   return(
-    as.data.frame(Activity_Label) +
+    as.data.frame(x.ax) +
       as.data.frame(x.ay) +
       as.data.frame(x.az)
   ) * 4 /3
   
 }
+
 
 ########################################################
 # @Description   compute the average of the aut file   # 
@@ -107,19 +109,56 @@ LabelActivity <- function(x)
 # @return        data frame                            #
 ########################################################
 
-TemperatureMean <- function (temp)
+TemperatureMean <- function (temp,synchroVar)
 {
   
   e<-data.frame(temp)
   
-  #grouping variable for every 100 lines                             
-  grp<-(seq.int(nrow(e))-1) %/% 1000 + 1
+  #grouping variable for every synchroVar lines                             
+  grp<-(seq.int(nrow(e))-1) %/% synchroVar + 1
   
   #use aggregate to calculate mean for groups
   temperature<-aggregate(.~grp,e, mean)
   temperature<-temperature[,-1]
   return (as.data.frame(temperature))
 }
+
+TemperatureMean1 <- function (temp)
+{
+  
+  e<-data.frame(temp)
+  
+  #grouping variable for every synchroVar lines                             
+  grp<-(seq.int(nrow(e))-1) %/% 2000 + 1
+  
+  #use aggregate to calculate mean for groups
+  temperature<-aggregate(.~grp,e, mean)
+  temperature<-temperature[,-1]
+  return (as.data.frame(temperature))
+}
+
+
+synchro <- function(aut_size,data_size)
+{
+
+ y<-(data_size*2000)/aut_size
+ return (y)
+}
+
+RrMean <- function (rr)
+{
+  
+  e<-data.frame(rr)
+  
+  #grouping variable for every 20 lines                             
+  grp<-(seq.int(nrow(e))-1) %/% 20 + 1
+  
+  #use aggregate to calculate mean for groups
+  rr1<-aggregate(.~grp,e, mean)
+  rr1<-rr1[,-1]
+  return (as.data.frame(rr1))
+}
+
 
 decouper <- function(x)
 {
@@ -181,5 +220,13 @@ activite1 <- function(l)
     s <- s + abs(l[[i]]["a"])
   }
   return(s)
+}
+
+
+LabelTemp <- function(x)
+{
+  
+  ifelse(x<29,'Tlow',ifelse(x>=30 & x<32,'Tmeduim','Tnormal'))
+  
 }
 
