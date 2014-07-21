@@ -7,11 +7,6 @@
 # @author                Djedou Zakaria                                                         #
 #################################################################################################
 
-
-#####################
-#Mother class signal#
-#####################
-
 .Aut.valid <- function(object){ return(TRUE)}
 setClass (
   Class ="Aut",
@@ -48,12 +43,58 @@ setMethod( f ="[",signature ="Aut",
 
 LoadAut <- function(file_path)
 {
-  e <- read.csv(file_path, col.names = c("Time","ParaSymp","Symp"))
-  taille <- dim(e)[1]
-  s <- e[10:(taille-20),]
+  # use readLines() to get file line-by-line 
+  e <- readLines(file_path)
+  
+  # filter out "error"
+  e <- e[grep("Erreur", e, invert=TRUE)]
+  
+  # turn structure into a string we can pass to textConnection
+  e <-read.csv(textConnection(paste(e, collapse="\n")), header=TRUE)
+
+  s <- e
   parasymp <- new(Class="Signal", val=as.numeric(unlist(s["ParaSymp"])))
   symp <- new(Class="Signal", val=as.numeric(unlist(s["Symp"])))
-  Time <- new(Class="Signal", val=as.numeric(unlist(s["Time"])))
+  Temp <- new(Class="Signal", val=as.numeric(unlist(s["Temp"])))
   return(new(Class="Aut",ParaSymp = parasymp, Symp = symp))
+  
+}
+
+########################################################
+# @Description   compute the average of the aut file   # 
+#                                                      #
+# @param         aut Slots (Sympa,ParaSymp)            #
+# @return        data frame                            # 
+########################################################
+
+autMean<- function(aut)
+{
+  e<-data.frame(aut)
+  
+  #grouping variable for every 10 lines                             
+  grp<-(seq.int(nrow(e))-1) %/% 10 
+  
+  #use aggregate to calculate mean for groups
+  aut2<-aggregate(.~grp,e, mean)
+  aut2<-aut2[,-1]
+  return (as.data.frame(aut2))
+  
+}
+
+Cutaut <- function (x,y)
+{
+  z <- data.frame(LFHFratio= numeric(0))
+  
+  for (i in 1:length(x))
+  {
+    z<-x/y  
+  }
+  return (z)
+}
+
+LabelHRV <- function(x)
+{
+  
+  ifelse(x<1,'PSNS','SNS')
   
 }

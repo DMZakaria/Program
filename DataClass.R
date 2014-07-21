@@ -7,11 +7,6 @@
 # @author                Djedou Zakaria                                                         #
 #################################################################################################
 
-
-#####################
-#Mother class signal#
-#####################
-
 .Data.valid <- function(object){ return(TRUE)}
 setClass (
   Class ="Data",
@@ -52,7 +47,7 @@ setMethod( f ="[",signature ="Data",
 # @return        created object (class instantiation)          #
 ################################################################
 
-LoadData <- function(file_path)
+LoadData <- function(file_path)          
 {
   e <- read.table(file_path,header=TRUE,sep=",",col.names = c("X","Y","Z","Temp"))
   taille <- dim(e)[1]
@@ -66,11 +61,94 @@ LoadData <- function(file_path)
 }
 
 
-# # rapide description
-# setMethod( f ="show",signature ="Data",
-#            def = function(object)
-#            {
-#              s <- paste("Exeperience:",object@numnight," Sujet:",object@Sujet,"\n")
-#              cat(s)
-#            }
-# )
+
+##############################################################
+# @Description   compute the average of the activity level   # 
+#                                                            #
+# @param         data file solts (X,Y,Z)                     #
+# @return        data frame                                  # 
+##############################################################
+
+activityMean <- function(x,synchro.var)
+{
+  x.x <- decouper(x["X"]["val"])
+  x.y <- decouper(x["Y"]["val"])
+  x.z <- decouper(x["Z"]["val"])
+  x.xx <- spliter(x.x,synchro.var)
+  x.yy <- spliter(x.y,synchro.var)
+  x.zz <- spliter(x.z,synchro.var)
+  x.ax <- unlist(lapply(x.xx,activite1))
+  x.ay <- unlist(lapply(x.yy,activite1))
+  x.az <- unlist(lapply(x.zz,activite1))
+  return(
+    as.data.frame(x.ax) +
+      as.data.frame(x.ay) +
+      as.data.frame(x.az)
+  ) * 4 /3
+  
+}
+
+activite1 <- function(l)
+{
+  s <- 0
+  for(i in 1:length(l))
+  {
+    s <- s + abs(l[[i]]["a"])
+  }
+  return(s)
+}
+
+
+
+###############################################################
+# @Description   assign a value to activity                   # 
+#                                                             #
+# @param         Activity data frame                          #
+###############################################################
+
+LabelActivity <- function(x)
+{
+  
+  ifelse(x<100,'null',ifelse(x>=100 & x<300,'medium','high'))
+  
+}
+
+########################################################
+# @Description   compute the average of the aut file   # 
+#                                                      #
+# @param         aut Slots (Sympa,ParaSymp)            #
+# @return        data frame                            #
+########################################################
+TemperatureMean1 <- function (temp)
+{
+  
+  e<-data.frame(temp)
+  
+  #grouping variable for every synchroVar lines                             
+  grp<-(seq.int(nrow(e))-1) %/% 2000 + 1
+  
+  #use aggregate to calculate mean for groups
+  temperature<-aggregate(.~grp,e, mean)
+  temperature<-temperature[,-1]
+  return (as.data.frame(temperature))
+}
+
+
+# LoadData <- function(file_path)
+# {
+#   # use readLines() to get file line-by-line 
+#   e <- readLines(file_path)
+#   
+#   # filter out "error"
+#   e <- e[grep("Erreur", e, invert=TRUE)]
+#   
+#   # turn structure into a string we can pass to textConnection
+#   e <-read.csv(textConnection(paste(e, collapse="\n")), header=TRUE)
+#   s <- e
+#   x <- new(Class="Signal", val=as.numeric(unlist(s["X"])))
+#   y <- new(Class="Signal", val=as.numeric(unlist(s["Y"])))
+#   z <- new(Class="Signal", val=as.numeric(unlist(s["Z"])))
+#   temp <- new(Class="Signal", val=as.numeric(unlist(s["Temp"])))
+#   return(new(Class="Data",X=x, Y=y, Z=z, Temp = temp))
+#   
+# }
